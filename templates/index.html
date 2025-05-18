@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitor de Processos</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Processos em Execução</h1>
+    <table>
+        <tr>
+            <th>PID</th>
+            <th>Nome</th>
+            <th>CPU (%)</th>
+            <th>Memória (MB)</th>
+        </tr>
+        {% for proc in processos %}
+        <tr>
+            <td>{{ proc.pid }}</td>
+            <td>{{ proc.nome }}</td>
+            <td>{{ proc.cpu }}</td>
+            <td>{{ proc.memoria }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
