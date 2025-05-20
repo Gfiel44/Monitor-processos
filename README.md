@@ -8,8 +8,8 @@ Este projeto é uma aplicação web desenvolvida em Python com Flask, executada 
 
 - ✅ Listagem em tempo real dos processos ativos (PID, nome, CPU %, memória)
 - ✅ Interface web simples e acessível via navegador
+- ✅ Botão para encerramento de processos
 - 🔒 Projeto modular com potencial para incluir:
-  - Encerramento de processos
   - Alteração de prioridades
   - Alertas de uso elevado de recursos
   - Geração de relatórios gráficos
