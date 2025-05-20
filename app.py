@@ -36,5 +36,15 @@ def api_processos():
             pass
     return jsonify(processos)
 
+@app.route('/api/uso_total')
+def uso_total():
+    cpu = psutil.cpu_percent(interval=0.5)
+    memoria = psutil.virtual_memory()
+    return jsonify({
+        'cpu_percent': cpu,
+        'memoria_usada': round(memoria.used / (1024*1024), 2),
+        'memoria_total': round(memoria.total/ (1024*1024), 2)
+    })
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
