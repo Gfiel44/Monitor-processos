@@ -33,21 +33,45 @@
 </head>
 <body>
     <h1>Processos em Execução</h1>
-    <table>
-        <tr>
-            <th>PID</th>
-            <th>Nome</th>
-            <th>CPU (%)</th>
-            <th>Memória (MB)</th>
-        </tr>
-        {% for proc in processos %}
-        <tr>
-            <td>{{ proc.pid }}</td>
-            <td>{{ proc.nome }}</td>
-            <td>{{ proc.cpu }}</td>
-            <td>{{ proc.memoria }}</td>
-        </tr>
-        {% endfor %}
+    <table id="tabela-processos">
+        <thead>
+            <tr>
+                <th>PID</th>
+                <th>Nome</th>
+                <th>CPU (%)</th>
+                <th>Memória (MB)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Os dados virão via JavaScript -->
+        </tbody>
     </table>
+
+    <script>
+        function atualizarTabela() {
+            fetch('/api/processos')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#tabela-processos tbody');
+                    tbody.innerHTML = '';  // limpa a tabela
+
+                    data.forEach(proc => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${proc.pid}</td>
+                            <td>${proc.nome}</td>
+                            <td>${proc.cpu}</td>
+                            <td>${proc.memoria}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                });
+        }
+
+        // Atualiza a tabela a cada 3 segundos
+        setInterval(atualizarTabela, 3000);
+        // Carrega imediatamente ao abrir
+        atualizarTabela();
+    </script>
 </body>
 </html>

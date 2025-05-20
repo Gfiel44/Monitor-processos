@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 import psutil
 
 app = Flask(__name__)
@@ -19,6 +19,22 @@ def index():
             pass
 
     return render_template('index.html', processos=processos)
+
+@app.route('/api/processos')
+def api_processos():
+    processos = []
+    for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_info']):
+        try:
+            info = proc.info
+            processos.append({
+                'pid': info['pid'],
+                'nome': info['name'],
+                'cpu': info['cpu_percent'],
+                'memoria': round(info['memory_info'].rss / (1024 * 1024), 2)
+            })
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+    return jsonify(processos)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
