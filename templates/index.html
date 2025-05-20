@@ -33,6 +33,9 @@
 </head>
 <body>
     <h1>Processos em Execução</h1>
+    <div id = "uso-total" style="text-align: center; margin-bottom: 20px; font-size: 18px;">
+        carregando uso de CPU e RAM
+    </div>
     <table id="tabela-processos">
         <thead>
             <tr>
@@ -67,11 +70,23 @@
                     });
                 });
         }
+        function atualizarUsoTotal(){
+            fetch('/api/uso_total')
+                .then(response => response.json())
+                .then(data=> {
+                    const div = document.getElementById('uso-total');
+                    div.innerHTML = `Uso da CPU: <strong>${data.cpu_percent}%</strong> | 
+                             RAM: <strong>${data.memoria_usada} MB</strong> / ${data.memoria_total} MB`;
+                })
+        }
 
-        // Atualiza a tabela a cada 3 segundos
-        setInterval(atualizarTabela, 3000);
-        // Carrega imediatamente ao abrir
+        setInterval(() => {
+            atualizarTabela();
+            atualizarUsoTotal();
+        }, 3000);
+
         atualizarTabela();
+        atualizarUsoTotal();
     </script>
 </body>
 </html>
