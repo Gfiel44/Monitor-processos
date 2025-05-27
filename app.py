@@ -13,7 +13,7 @@ def index():
                 'pid': info['pid'],
                 'nome': info['name'],
                 'cpu': info['cpu_percent'],
-                'memoria': round(info['memory_info'].rss / (1024 * 1024), 2)  # em MB
+                'memoria': round(info['memory_info'].rss / (1024 * 1024), 2) 
             })
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             pass
@@ -43,7 +43,9 @@ def uso_total():
     return jsonify({
         'cpu_percent': cpu,
         'memoria_usada': round(memoria.used / (1024*1024), 2),
-        'memoria_total': round(memoria.total/ (1024*1024), 2)
+        'memoria_total': round(memoria.total/ (1024*1024), 2),
+        'alerta_cpu': cpu > 80,
+        'alerta_memoria': memoria.percent > 90
     })
 
 @app.route('/api/encerrar', methods=['POST'])
