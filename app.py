@@ -23,14 +23,15 @@ def index():
 @app.route('/api/processos')
 def api_processos():
     processos = []
-    for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_info']):
+    for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_info', 'nice']):
         try:
             info = proc.info
             processos.append({
                 'pid': info['pid'],
                 'nome': info['name'],
                 'cpu': info['cpu_percent'],
-                'memoria': round(info['memory_info'].rss / (1024 * 1024), 2)
+                'memoria': round(info['memory_info'].rss / (1024 * 1024), 2),
+                'nice': info['nice']
             })
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             pass
@@ -59,6 +60,22 @@ def encerrar_processo():
         return jsonify({'mensagem': f'Processo {pid} encerrado com sucesso.'}), 200
     except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess) as e:
         return jsonify({'erro': str(e)}), 400
+
+@app.route('/api/ajustar_prioridade', methods=['POST'])
+def ajustar_prioridade():
+    dados = request.get_json()
+    pid = dados.get('pid')
+    delta = dados.get('delta')
+
+    try:
+        proc = psutil.Process(pid)
+        prioridade_atual = proc.nice()
+        nova_prioridade = max(min(prioridade_atual + delta, 19), -20)
+        proc.nice(nova_prioridade)
+        return jsonify({'mensagem': f'Nova prioridade: {nova_prioridade}'}), 200
+    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess) as e:
+        return jsonify({'erro': str(e)}), 400
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
