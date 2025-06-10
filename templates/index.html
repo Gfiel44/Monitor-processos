@@ -47,6 +47,8 @@
                 <th>CPU (%)</th>
                 <th>Memória (MB)</th>
                 <th>Ações</th>
+                <th>Prioridade</th>
+                <th>Ajustar</th>
             </tr>
         </thead>
         <tbody>
@@ -69,7 +71,14 @@
                         <td>${proc.nome}</td>
                         <td>${proc.cpu}</td>
                         <td>${proc.memoria}</td>
-                        <td><button onclick="encerrarProcesso(${proc.pid})">Encerrar</button></td>
+                        <td>${proc.nice}</td>
+                        <td>
+                            <button onclick="ajustarPrioridade(${proc.pid}, -1)">−</button>
+                            <button onclick="ajustarPrioridade(${proc.pid}, 1)">+</button>
+                        </td>
+                        <td>
+                            <button onclick="encerrarProcesso(${proc.pid})">Encerrar</button>
+                        </td>
                         `;
                         tbody.appendChild(row);
                     });
@@ -124,7 +133,26 @@
     .catch(error => {
         alert(`Falha na requisição: ${error}`);
     });
-}
+    }
+
+    function ajustarPrioridade(pid, delta) {
+    fetch('/api/ajustar_prioridade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pid: pid, delta: delta })
+    })
+    .then(response => {
+        if (response.ok) {
+            alert(`Prioridade ajustada para o processo ${pid}.`);
+        } else {
+            alert(`Erro ao ajustar prioridade do processo ${pid}.`);
+        }
+    })
+    .catch(error => {
+        alert(`Falha na requisição: ${error}`);
+    });
+    }
+
     </script>
 </body>
 </html>
